@@ -5,9 +5,11 @@
  */
 package bbdd;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import objetos.Usuario;
 import utils.Constantes;
 
 /**
@@ -87,6 +89,44 @@ public class ConexionBBDD {
             cod = ex.getErrorCode();
         }
         return cod;
+    }
+    
+    public int insertarUsuario(String nick, String email, String pass, String key, int rol){
+        String insert = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES ('" + nick + "'," + "'" + email + "'," + "'" + pass + "'," + "'" + key + "'," + "'" + rol + "')";
+        int cod = 0;
+        try {
+            Senntencia_SQL.executeUpdate(insert);
+        } catch (SQLException sq) {
+            cod = sq.getErrorCode();
+        }
+        return cod;
+    }
+    
+    public int borrarDato(String tabla, String where){
+        int cod = 0;
+        String Sentencia = "DELETE FROM " + tabla + " WHERE " + where;
+        try {
+            Senntencia_SQL.executeUpdate(Sentencia);
+        } catch (SQLException ex) {
+            cod = ex.getErrorCode();
+        }
+        return cod;
+    }
+    
+    public Usuario getUsuario(String where) throws SQLException {
+        String sentencia = "SELECT * from " + Constantes.TablaUsuarios + " WHERE " + where;        
+        ResultSet usuarios = Senntencia_SQL.executeQuery(sentencia);
+        if (usuarios.next()) {
+            Usuario u = new Usuario();
+            u.setEmail(usuarios.getString(Constantes.usuariosEmail));
+            u.setNick(usuarios.getString(Constantes.usuariosNick));
+            u.setPassResumida(usuarios.getBytes(Constantes.usuariosPass));
+            u.setClave(usuarios.getBytes(Constantes.usuariosClave));
+            u.setRol(usuarios.getInt(Constantes.usuariosRol));
+            return u;
+        } else {
+            return null;
+        }
     }
     
 }
