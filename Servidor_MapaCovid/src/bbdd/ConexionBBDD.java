@@ -7,8 +7,11 @@ package bbdd;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import objetos.Incidencia;
+import objetos.Region;
 import objetos.Usuario;
 import utils.Constantes;
 
@@ -27,11 +30,10 @@ public class ConexionBBDD {
     
     public void abrirConexion(){
         try {
-            
-            String controlador = "org.mariadb.jdbc.Driver";
+            String controlador = "com.mysql.jdbc.Driver";
             Class.forName(controlador).newInstance();
             String URL_BD = "jdbc:mysql://localhost/" + Constantes.bbdd;
-            Conexion = java.sql.DriverManager.getConnection(URL_BD, Constantes.usuariobd, Constantes.passwbd);
+            Conexion = java.sql.DriverManager.getConnection(URL_BD, Constantes.usuariobd, Constantes.passwdbd);
             Senntencia_SQL = Conexion.createStatement();
             System.out.println("Conexion realizada con exito");
             
@@ -39,6 +41,7 @@ public class ConexionBBDD {
             ex.printStackTrace();
         }
     }
+    
     
     public void cerrarConexion(){
         try {
@@ -119,14 +122,54 @@ public class ConexionBBDD {
         if (usuarios.next()) {
             Usuario u = new Usuario();
             u.setEmail(usuarios.getString(Constantes.usuariosEmail));
-            u.setNick(usuarios.getString(Constantes.usuariosNick));
-            u.setPassResumida(usuarios.getBytes(Constantes.usuariosPass));
-            u.setClave(usuarios.getBytes(Constantes.usuariosClave));
+            u.setNombre(usuarios.getString(Constantes.usuariosNombre));
+            u.setPassresumida(usuarios.getBytes(Constantes.usuariosPass));
+            //u.setClavePublicaUsuario(usuarios.getBytes(Constantes.usuariosClave));
             u.setRol(usuarios.getInt(Constantes.usuariosRol));
             return u;
         } else {
             return null;
         }
+    }
+    
+    public Region getRegion(String where) throws SQLException{
+        String sentencia = "SELECT * from " + Constantes.TablaRegiones + " WHERE " + where;
+        ResultSet regiones = Senntencia_SQL.executeQuery(sentencia);
+        if (regiones.next()) {
+            Region r = new Region();
+            r.setRegion(regiones.getString(Constantes.regionesRegion));
+            return r;
+        }else{
+            return null;
+        }
+    }
+
+    public String obtenerValor(String tabla, String where, String campo) throws SQLException {
+        String sentencia = "SELECT * from " + tabla + " WHERE " + where;
+        Conj_registros = Senntencia_SQL.executeQuery(sentencia);
+        if (Conj_registros.next()) {
+            return Conj_registros.getString(campo);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean existeRegion(String where) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public ArrayList<Incidencia> mostrarTodasLasIncidencias() throws SQLException{
+        ArrayList<Incidencia> listaIncidencias=new ArrayList<>();
+        String sentencia = "SELECT * from " + Constantes.TablaIncidencias;
+        ResultSet incidencias = Senntencia_SQL.executeQuery(sentencia);
+        while (incidencias.next()){
+            Incidencia i = new Incidencia();
+            i.setRegion(incidencias.getInt(Constantes.incidenciasRegion));
+            i.setInfectado(incidencias.getString(Constantes.incidenciasInfectado));
+            i.setFecha(incidencias.getString(Constantes.incidenciasFecha));
+            listaIncidencias.add(i);
+        }
+        return listaIncidencias;
     }
     
 }

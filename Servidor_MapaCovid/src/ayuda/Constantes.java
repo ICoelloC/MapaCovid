@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utils;
+package ayuda;
 
 /**
  *
@@ -22,9 +22,7 @@ public class Constantes {
     public static final int CARGAR_INCIDENCIAS=8;
     public static final int ADD_INCIDENCIA=9;
     public static final int CARGAR_USUARIOS=10;
-    public static final int BORRAR_USUARIO=11;
-    public static final int DESACTIVAR_USUARIO=12;
-    public static final int ACTIVAR_USUARIO=13;
+    public static final int BORRAR_USUARIO=11;  
     
     //--------------- valores ----------------------
     public static final int ROL_ADMINISTRADOR=1;

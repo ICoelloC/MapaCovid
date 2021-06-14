@@ -16,15 +16,15 @@ import javax.crypto.SecretKey;
  * @author ivanc
  */
 public class Usuario {
-    
-    private String email,nombre;
+
+    private String email, nombre;
     private int rol;
     private byte[] passresumida;
     SecretKey clave;
     PrivateKey clavePrivadaUsuario;
     PublicKey clavePublicaUsuario;
 
-    public Usuario(String email, String nombre, int rol, byte[] passresumida,SecretKey clave, PrivateKey clavePrivadaUsuario, PublicKey clavePublicaUsuario) {
+    public Usuario(String email, String nombre, int rol, byte[] passresumida, SecretKey clave, PrivateKey clavePrivadaUsuario, PublicKey clavePublicaUsuario) {
         this.email = email;
         this.nombre = nombre;
         this.rol = rol;
@@ -39,8 +39,6 @@ public class Usuario {
         this.passresumida = passresumida;
     }
 
-    
-    
     public Usuario() {
     }
 
@@ -99,13 +97,11 @@ public class Usuario {
     public void setClave(SecretKey clave) {
         this.clave = clave;
     }
-    
-    
-    
-    public boolean validarEmail(String email){
+
+    public boolean validarEmail(String email) {
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
-        Matcher matcher=pattern.matcher(email);
+        Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-    
+
 }
