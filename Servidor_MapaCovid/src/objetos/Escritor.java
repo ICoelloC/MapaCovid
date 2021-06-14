@@ -5,7 +5,6 @@
  */
 package objetos;
 
-import seguridad.Seguridad;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,13 +14,13 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import javax.crypto.SealedObject;
+import seguridad.Seguridad;
 
 /**
  *
  * @author ivanc
  */
 public class Escritor {
-
     private DataInputStream dis;
     private DataOutputStream dos;
     private ObjectInputStream ois;
@@ -53,5 +52,4 @@ public class Escritor {
     public ObjectOutputStream oos() {
         return oos;
     }
-
 }

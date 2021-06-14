@@ -5,9 +5,15 @@
  */
 package interfaces;
 
+import ayuda.Constantes;
 import java.net.Socket;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import objetos.Escritor;
+import objetos.Usuario;
+import seguridad.Seguridad;
 
 /**
  *
@@ -16,15 +22,19 @@ import objetos.Escritor;
 public class frmRegistro extends javax.swing.JFrame {
 
     private JFrame principal;
-    private Socket servidor;   
+    private Socket servidor;
     private Escritor e;
-    
+    String email;
+    String pass;
+    String username;
+    int rol;
+
     public frmRegistro(JFrame principal, Socket servidor, Escritor e) {
         this.principal = principal;
         this.servidor = servidor;
         this.e = e;
         initComponents();
-        
+
     }
 
     /**
@@ -42,16 +52,19 @@ public class frmRegistro extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        registerEmailTXT = new javax.swing.JTextField();
-        registerNickTXT = new javax.swing.JTextField();
-        registerPassTXT = new javax.swing.JPasswordField();
-        registerRepeatPassTXT = new javax.swing.JPasswordField();
-        registerRoleCMB = new javax.swing.JComboBox<>();
+        txtEmail = new javax.swing.JTextField();
+        txtUsername = new javax.swing.JTextField();
+        txtPasss = new javax.swing.JPasswordField();
+        txtRepeatPass = new javax.swing.JPasswordField();
+        cmbRoles = new javax.swing.JComboBox<>();
         registerVolverBTN = new javax.swing.JButton();
         registerLimpiarBTN = new javax.swing.JButton();
         registerRegistrarBTN = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Registrarse");
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setText("Email:");
 
@@ -63,7 +76,7 @@ public class frmRegistro extends javax.swing.JFrame {
 
         jLabel5.setText("Rol del usuario:");
 
-        registerRoleCMB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gestor", "Admin" }));
+        cmbRoles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un rol", "Gestor", "Admin" }));
 
         registerVolverBTN.setText("Volver");
         registerVolverBTN.setToolTipText("");
@@ -81,6 +94,11 @@ public class frmRegistro extends javax.swing.JFrame {
         });
 
         registerRegistrarBTN.setText("Registrarse");
+        registerRegistrarBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                registerRegistrarBTNActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,14 +127,14 @@ public class frmRegistro extends javax.swing.JFrame {
                         .addGap(24, 24, 24))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(registerRepeatPassTXT)
+                            .addComponent(txtRepeatPass)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(registerNickTXT)
-                                    .addComponent(registerEmailTXT)
-                                    .addComponent(registerPassTXT, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
+                                    .addComponent(txtUsername)
+                                    .addComponent(txtEmail)
+                                    .addComponent(txtPasss, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE))
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(registerRoleCMB, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cmbRoles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(40, 40, 40))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -125,23 +143,23 @@ public class frmRegistro extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(registerEmailTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(registerNickTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(registerPassTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPasss, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(registerRepeatPassTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtRepeatPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(registerRoleCMB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(registerVolverBTN)
@@ -165,46 +183,97 @@ public class frmRegistro extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private boolean coincidenPass(){
-        return registerPassTXT.getText().equals(registerRepeatPassTXT.getText());
+    private boolean coincidenPass() {
+        return txtPasss.getText().equals(txtRepeatPass.getText());
     }
-    
+
     private void registerLimpiarBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerLimpiarBTNActionPerformed
         limpiarFormulario();
     }//GEN-LAST:event_registerLimpiarBTNActionPerformed
 
     private void registerVolverBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerVolverBTNActionPerformed
-        this.dispose();
-        principal.setVisible(true);
+        volverALogin();
     }//GEN-LAST:event_registerVolverBTNActionPerformed
+
+    private void registerRegistrarBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerRegistrarBTNActionPerformed
+        try {
+            if (camposValidos()) {
+                e.escribir(true);
+                e.escribir(Constantes.REGISTRAR);
+                email = txtEmail.getText();
+                pass = txtPasss.getText();
+                username = txtUsername.getText();
+                rol = cmbRoles.getSelectedIndex();
+                Object[] claves = Seguridad.generarClaves();
+                
+                PrivateKey cpriv = (PrivateKey) claves[0];
+                PublicKey cpub = (PublicKey) claves[1];
+                /*Usuario u = new Usuario(email, username, rol, Seguridad.resumir(pass), cpriv, cpub);
+                e.escribir(u);
+                if((boolean) e.leer()){
+                    limpiarFormulario();
+                    JOptionPane.showMessageDialog(null, "Usuario registrado con exito!");
+                    volverALogin();
+                }
+                */
+            }
+        } catch (Exception e) {
+
+        }
+
+    }//GEN-LAST:event_registerRegistrarBTNActionPerformed
 
     /**
      * @param args the command line arguments
      */
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cmbRoles;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField registerEmailTXT;
     private javax.swing.JButton registerLimpiarBTN;
-    private javax.swing.JTextField registerNickTXT;
-    private javax.swing.JPasswordField registerPassTXT;
     private javax.swing.JButton registerRegistrarBTN;
-    private javax.swing.JPasswordField registerRepeatPassTXT;
-    private javax.swing.JComboBox<String> registerRoleCMB;
     private javax.swing.JButton registerVolverBTN;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JPasswordField txtPasss;
+    private javax.swing.JPasswordField txtRepeatPass;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 
     private void limpiarFormulario() {
-        registerEmailTXT.setText("");
-        registerNickTXT.setText("");
-        registerPassTXT.setText("");
-        registerRepeatPassTXT.setText("");
-        registerRoleCMB.setSelectedIndex(0);
+        txtEmail.setText("");
+        txtUsername.setText("");
+        txtPasss.setText("");
+        txtRepeatPass.setText("");
+        cmbRoles.setSelectedIndex(0);
+    }
+
+    private boolean camposValidos() {
+        boolean valido = false;
+
+        if (txtPasss.getText().equals("")
+                || txtRepeatPass.getText().equals("")
+                || txtEmail.getText().equals("")
+                || txtUsername.getText().equals("")
+                || cmbRoles.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos");
+        } else {
+            if (txtPasss.getText().equals(txtRepeatPass.getText())) {
+                valido = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Contraseñas distintas");
+            }
+        }
+
+        return valido;
+    }
+
+    private void volverALogin() {
+        this.dispose();
+        principal.setVisible(true);
     }
 }

@@ -5,12 +5,19 @@
  */
 package interfaces;
 
-import com.sun.istack.internal.logging.Logger;
+import ayuda.Constantes;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import objetos.Claves;
 import objetos.Escritor;
+import objetos.Usuario;
+import seguridad.Seguridad;
 
 /**
  *
@@ -22,14 +29,22 @@ public class frmLogin extends javax.swing.JFrame {
     private final String ALGORITMO = "SHA1";
     private PrivateKey clavepriv;
     private PublicKey clavepubl, serverKey;
-    //private Claves claves;
+    private Claves claves;
     private Escritor e;
-    
+
     /**
      * Creates new form frmLogin
      */
-    public frmLogin() {
+    public frmLogin() throws Exception {
         initComponents();
+        /*
+        InetAddress dir = InetAddress.getLocalHost();
+        this.servidor = new Socket(dir, 1050);
+        Claves claves = new Claves();
+        Escritor e = new Escritor(servidor, claves);
+        this.claves = claves;
+        this.e = e;
+        */
     }
 
     /**
@@ -48,8 +63,17 @@ public class frmLogin extends javax.swing.JFrame {
         loginPassTXT = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
         loginRegistrarseBTN = new javax.swing.JButton();
+        btnInvitado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Login");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setText("Email:");
 
@@ -69,29 +93,39 @@ public class frmLogin extends javax.swing.JFrame {
             }
         });
 
+        btnInvitado.setText("Invitado");
+        btnInvitado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInvitadoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(28, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(47, 47, 47)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loginCorreoTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(loginPassTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(158, 158, 158)
+                                .addComponent(jButton1))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(149, 149, 149)
+                                .addComponent(loginRegistrarseBTN)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnInvitado))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(28, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(47, 47, 47)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(loginCorreoTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(loginPassTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(26, 26, 26))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(158, 158, 158)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(149, 149, 149)
-                        .addComponent(loginRegistrarseBTN)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,10 +139,15 @@ public class frmLogin extends javax.swing.JFrame {
                     .addComponent(loginPassTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addComponent(loginRegistrarseBTN)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(loginRegistrarseBTN)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnInvitado)
+                        .addGap(20, 20, 20))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -127,23 +166,38 @@ public class frmLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        
-        if (loginCorreoTXT.getText().isEmpty() && loginPassTXT.getText().isEmpty()) {
-            
-            //Accederiamos en modo invitado
-            
-        }else if (comprobarFormulario()){
-            
-            //Iniciaría sesión
-            
-        }else{
-            
+
+        if (loginCorreoTXT.getText().isEmpty() || loginPassTXT.getText().isEmpty()) {
+
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos");
+
+        } else if (comprobarFormulario()) {
+
+            try {
+                e.escribir(true);
+                e.escribir(Constantes.LOGEAR);
+                String email = loginCorreoTXT.getText().toLowerCase();
+                String pass = loginPassTXT.getText();
+                Usuario u = new Usuario(email, Seguridad.resumir(pass));
+                e.escribir(u);
+                if ((boolean) e.leer()) {
+                    u = getUser(email);
+                    JOptionPane.showMessageDialog(null, "Ha iniciado sesión con exito", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                    frmPrincipal frm = new frmPrincipal(this,u, e, servidor);
+                    frm.setVisible(true);
+                    this.dispose();
+                }
+
+            } catch (Exception ex) {
+                java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+
             //Tiene que rellenar todos los campos para poder intentar iniciar sesión
-            
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void loginRegistrarseBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginRegistrarseBTNActionPerformed
@@ -151,7 +205,22 @@ public class frmLogin extends javax.swing.JFrame {
         this.setVisible(false);
         reg.setVisible(true);
     }//GEN-LAST:event_loginRegistrarseBTNActionPerformed
-    
+
+    private void btnInvitadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInvitadoActionPerformed
+        frmPrincipal principal = new frmPrincipal(this, null, e, servidor);
+        principal.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnInvitadoActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        try {
+            e.escribir(false);
+            servidor.close();
+        } catch (Exception ex) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
     /**
      * @param args the command line arguments
      */
@@ -182,12 +251,17 @@ public class frmLogin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmLogin().setVisible(true);
+                try {
+                    new frmLogin().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnInvitado;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -199,5 +273,13 @@ public class frmLogin extends javax.swing.JFrame {
 
     private boolean comprobarFormulario() {
         return !loginCorreoTXT.getText().isEmpty() && !loginPassTXT.getText().isEmpty();
+    }
+
+    private Usuario getUser(String email) throws Exception {
+        e.escribir(true);
+        e.escribir(Constantes.GET_USER);
+        e.escribir(email);
+        Usuario u = (Usuario) e.leer();
+        return u;
     }
 }
