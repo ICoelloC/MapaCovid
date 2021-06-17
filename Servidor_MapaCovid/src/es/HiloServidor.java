@@ -225,8 +225,12 @@ class HiloServidor extends Thread {
         conexion.cerrarConexion();
     }
 
-    private void addIncidencia() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void addIncidencia() throws Exception {
+        Incidencia i = (Incidencia) e.leer();
+        conexion.abrirConexion();
+        conexion.insertarIncidencia(i.getRegion(), i.getInfectado(), i.getFecha());
+        conexion.cerrarConexion();
+        e.escribir(true);
     }
 
     private void cargarUsuarios() {
@@ -311,9 +315,9 @@ class HiloServidor extends Thread {
     private void cargarUsuariosB() throws Exception {
         conexion.abrirConexion();
         ArrayList<Usuario_b> usuarios = conexion.listaUsuariosB(conectado);
-        for (Usuario_b u : usuarios) {
+        for (Usuario_b user : usuarios) {
             e.escribir(true);
-            e.escribir(u);
+            e.escribir(user);
         }
         e.escribir(false);
         conexion.cerrarConexion();

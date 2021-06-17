@@ -5,9 +5,15 @@
  */
 package interfaces;
 
+import ayuda.Constantes;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import objetos.Escritor;
+import objetos.Incidencia;
+import objetos.Region;
 import objetos.Usuario;
 import objetos.Usuario_b;
 
@@ -22,8 +28,11 @@ public class frmAddIncidencias extends javax.swing.JFrame {
     //private Usuario usuario;
     private Usuario_b usuario;
     private Escritor e;
+    
+    String infectado, fecha;
+    int region;
 
-    public frmAddIncidencias(JFrame principal, Usuario_b usuario , Escritor e, Socket servidor) {
+    public frmAddIncidencias(JFrame principal, Usuario_b usuario, Escritor e, Socket servidor) {
         initComponents();
         this.principal = principal;
         this.servidor = servidor;
@@ -60,6 +69,11 @@ public class frmAddIncidencias extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Añadir Incidencias");
         setSize(new java.awt.Dimension(761, 516));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -71,8 +85,6 @@ public class frmAddIncidencias extends javax.swing.JFrame {
         });
 
         jLabel1.setText("Regiones");
-
-        cmbRegiones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText("Nombre del infectado");
 
@@ -163,8 +175,32 @@ public class frmAddIncidencias extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnAddIncidenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddIncidenciaActionPerformed
-        // TODO add your handling code here:
+
+        try {
+            if (camposValidos()) {
+                e.escribir(true);
+                e.escribir(Constantes.ADD_INCIDENCIA);
+                infectado = txtNombreInfectado.getText();
+                fecha = txtFecha.getText();
+                region = cmbRegiones.getSelectedIndex() + 1;
+                Incidencia i = new Incidencia(region, infectado, fecha);
+                e.escribir(i);
+                if ((boolean) e.leer()){
+                    JOptionPane.showMessageDialog(null, "Incidencia registrada con exito!");
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(frmAddIncidencias.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAddIncidenciaActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try {
+            cargarComboRegiones();
+        } catch (Exception ex) {
+            Logger.getLogger(frmAddIncidencias.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowOpened
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddIncidencia;
@@ -177,4 +213,26 @@ public class frmAddIncidencias extends javax.swing.JFrame {
     private javax.swing.JTextField txtFecha;
     private javax.swing.JTextField txtNombreInfectado;
     // End of variables declaration//GEN-END:variables
+
+    private boolean camposValidos() {
+        boolean valido = false;
+
+        if (txtNombreInfectado.getText().equals("")
+                || txtFecha.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos");
+        } else {
+            valido = true;
+        }
+
+        return valido;
+    }
+
+    private void cargarComboRegiones() throws Exception {
+        e.escribir(true);
+        e.escribir(Constantes.CARGAR_REGIONES);
+        while((boolean) e.leer()){
+            Region r = (Region) e.leer();
+            cmbRegiones.addItem(r.getRegion());            
+        }
+    }
 }

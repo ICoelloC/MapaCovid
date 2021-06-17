@@ -108,6 +108,17 @@ public class ConexionBBDD {
         }
         return cod;
     }
+    
+    public int insertarIncidencia(int region, String infectado, String fecha) {
+        String insert = "INSERT INTO " + Constantes.TablaIncidencias + " VALUES (" + null + ", " + region + ", '"+infectado+"', '"+ fecha +"')";
+        int cod = 0;
+        try{
+            Senntencia_SQL.executeUpdate(insert);
+        }catch(SQLException sq){
+            cod = sq.getErrorCode();
+        }
+        return cod;
+    }
 
     public int insertarUsuarioB(String nick, String email, int rol, String pass, boolean activo) {
         if (rol == 2){
@@ -244,14 +255,13 @@ public class ConexionBBDD {
 
     public ArrayList<Usuario_b> listaUsuariosB(Usuario_b conectado) throws SQLException {
         ArrayList<Usuario_b> ListaUsuario_b = new ArrayList<>();
-        //String sentencia = "SELECT * from "+Constantes.TablaUsuariosB+" WHERE "+Constantes.usuariosBEmail+" != '"+conectado.getEmail()+"'";
-        String sentencia = "SELECT * FROM " + Constantes.TablaUsuariosB;
+        String sentencia = "SELECT * from "+Constantes.TablaUsuariosB+" WHERE "+Constantes.usuariosBNombre+" not like '"+conectado.getNombre()+"'";
+        //String sentencia = "SELECT * FROM " + Constantes.TablaUsuariosB;
         ResultSet usuarios = Senntencia_SQL.executeQuery(sentencia);
         while(usuarios.next()){
             Usuario_b u= new Usuario_b();
             u.setEmail(usuarios.getString(Constantes.usuariosBEmail));
             u.setNombre(usuarios.getString(Constantes.usuariosBNombre));
-            //u.setPassresumida(usuarios.getBytes(Constantes.usuariosBPass));
             u.setRol(usuarios.getInt(Constantes.usuariosBRol));
             u.setActivo(usuarios.getBoolean(Constantes.usuariosBActivo));
             ListaUsuario_b.add(u);

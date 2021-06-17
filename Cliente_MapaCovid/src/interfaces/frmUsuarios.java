@@ -95,7 +95,7 @@ public class frmUsuarios extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Correo", "Nick", "Rol", "Activo"
             }
         ));
         tblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -215,6 +215,7 @@ public class frmUsuarios extends javax.swing.JFrame {
             e.escribir(accion);
             e.escribir(email);
             JOptionPane.showMessageDialog(null, "USUARIO activado");
+            limpiarTabla();
             cargarUsuarios();
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,12 +229,7 @@ public class frmUsuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddUsuarioActionPerformed
 
     private void pnlPrincipalComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnlPrincipalComponentShown
-        try {
-            //cargarUsuarios();
-            cargarUsuariosB();
-        } catch (Exception ex) {
-            Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }//GEN-LAST:event_pnlPrincipalComponentShown
 
     private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblUsuariosMouseClicked
@@ -284,18 +280,35 @@ public class frmUsuarios extends javax.swing.JFrame {
         }
     }
     
-    private void cargarUsuarios() throws Exception {
-        DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
-        e.escribir(true);
-        e.escribir(Constantes.CARGAR_USUARIOS);
-        int fila = 0;
-        limpiarTabla();
-        while ((boolean) e.leer()) {
-            Usuario u = (Usuario) e.leer();
-            tm.addRow(new Object[4]);
-            addUser(u, fila);
-            fila++;
+    private void cargarUsuarios(){
+        try {
+            DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
+            e.escribir(true);
+            e.escribir(Constantes.CARGAR_USUARIOS);
+            int fila = 0;
+            limpiarTabla();
+            while ((boolean) e.leer()) {
+                Usuario_b u = (Usuario_b) e.leer();
+                tm.addRow(new Object[4]);
+                addUserB(u,fila);
+                fila++;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void addUserB(Usuario_b u, int fila) {
+        tblUsuarios.setValueAt(u.getEmail(), fila, 0);
+        tblUsuarios.setValueAt(u.getNombre(), fila, 1);
+        String rol;
+        if (usuario.getRol() == 1) {
+            rol = "Administrador";
+        } else {
+            rol = "Gestor";
+        }
+        tblUsuarios.setValueAt(rol, fila, 2);
+        tblUsuarios.setValueAt(u.isActivo(), fila, 3);
     }
 
     private void addUser(Usuario u, int fila) {
@@ -326,18 +339,5 @@ public class frmUsuarios extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void addUserB(Usuario_b u, int fila) {
-        tblUsuarios.setValueAt(usuario.getEmail(), fila, 0);
-        tblUsuarios.setValueAt(usuario.getNombre(), fila, 1);
-        String rol;
-        if (usuario.getRol() == 1) {
-            rol = "Administrador";
-        } else {
-            rol = "Gestor";
-        }
-        tblUsuarios.setValueAt(rol, fila, 2);
-        tblUsuarios.setValueAt(usuario.isActivo(), fila, 3);
     }
 }
