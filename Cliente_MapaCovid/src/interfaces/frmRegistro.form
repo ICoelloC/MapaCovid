@@ -167,8 +167,8 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="3">
                 <StringItem index="0" value="Seleccione un rol"/>
-                <StringItem index="1" value="Gestor"/>
-                <StringItem index="2" value="Admin"/>
+                <StringItem index="1" value="Admin"/>
+                <StringItem index="2" value="Gestor"/>
               </StringArray>
             </Property>
           </Properties>

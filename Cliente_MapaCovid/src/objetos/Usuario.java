@@ -5,6 +5,7 @@
  */
 package objetos;
 
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.regex.Matcher;
@@ -15,23 +16,23 @@ import javax.crypto.SecretKey;
  *
  * @author ivanc
  */
-public class Usuario {
+public class Usuario implements Serializable{
 
     private String email, nombre;
     private int rol;
     private byte[] passresumida;
-    SecretKey clave;
     PrivateKey clavePrivadaUsuario;
     PublicKey clavePublicaUsuario;
+    boolean activo;
 
-    public Usuario(String email, String nombre, int rol, byte[] passresumida, SecretKey clave, PrivateKey clavePrivadaUsuario, PublicKey clavePublicaUsuario) {
+    public Usuario(String email, String nombre, int rol, byte[] passresumida, PrivateKey clavePrivadaUsuario, PublicKey clavePublicaUsuario, Boolean activo) {
         this.email = email;
         this.nombre = nombre;
         this.rol = rol;
-        this.clave = clave;
         this.passresumida = passresumida;
         this.clavePrivadaUsuario = clavePrivadaUsuario;
         this.clavePublicaUsuario = clavePublicaUsuario;
+        this.activo = activo;
     }
 
     public Usuario(String email, byte[] passresumida) {
@@ -39,8 +40,7 @@ public class Usuario {
         this.passresumida = passresumida;
     }
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
     public String getEmail() {
         return email;
@@ -90,12 +90,12 @@ public class Usuario {
         this.clavePublicaUsuario = clavePublicaUsuario;
     }
 
-    public SecretKey getClave() {
-        return clave;
+    public boolean isActivo() {
+        return activo;
     }
 
-    public void setClave(SecretKey clave) {
-        this.clave = clave;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public boolean validarEmail(String email) {

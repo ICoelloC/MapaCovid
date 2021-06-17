@@ -5,10 +5,17 @@
  */
 package interfaces;
 
+import ayuda.Constantes;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import objetos.Escritor;
+import objetos.Region;
 import objetos.Usuario;
+import objetos.Usuario_b;
 
 /**
  *
@@ -18,10 +25,12 @@ public class frmRegiones extends javax.swing.JFrame {
 
     private JFrame principal;
     private Socket servidor;
-    private Usuario usuario;
+    //private Usuario usuario;
+    private Usuario_b usuario;
     private Escritor e;
+    String nombre;
 
-    public frmRegiones(JFrame principal, Usuario usuario,  Escritor e, Socket servidor) {
+    public frmRegiones(JFrame principal, Usuario_b usuario, Escritor e, Socket servidor) {
         initComponents();
         this.principal = principal;
         this.servidor = servidor;
@@ -48,9 +57,9 @@ public class frmRegiones extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         btnVolver = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblRegiones = new javax.swing.JTable();
         btnAddRegion = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        txtNombreRegion = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         btnEliminarRegion = new javax.swing.JButton();
 
@@ -58,6 +67,16 @@ public class frmRegiones extends javax.swing.JFrame {
         setTitle("Gestión de Regiones");
         setMaximumSize(new java.awt.Dimension(343, 438));
         setSize(new java.awt.Dimension(343, 448));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setMaximumSize(new java.awt.Dimension(343, 428));
@@ -71,7 +90,7 @@ public class frmRegiones extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblRegiones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -82,7 +101,12 @@ public class frmRegiones extends javax.swing.JFrame {
                 "ID", "Region"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        tblRegiones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblRegionesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblRegiones);
 
         btnAddRegion.setText("Añadir");
         btnAddRegion.setToolTipText("");
@@ -97,6 +121,7 @@ public class frmRegiones extends javax.swing.JFrame {
 
         btnEliminarRegion.setText("Eliminar");
         btnEliminarRegion.setToolTipText("");
+        btnEliminarRegion.setEnabled(false);
         btnEliminarRegion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarRegionActionPerformed(evt);
@@ -117,7 +142,7 @@ public class frmRegiones extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
                             .addGap(28, 28, 28)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtNombreRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel2Layout.createSequentialGroup()
                             .addGap(59, 59, 59)
                             .addComponent(jLabel1))))
@@ -135,7 +160,7 @@ public class frmRegiones extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtNombreRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddRegion)
@@ -175,12 +200,71 @@ public class frmRegiones extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnAddRegionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRegionActionPerformed
-        // TODO add your handling code here:
+        if (!txtNombreRegion.getText().isEmpty()) {
+            try {
+                nombre = txtNombreRegion.getText();
+                e.escribir(true);
+                e.escribir(Constantes.ADD_REGION);
+                nombre = txtNombreRegion.getText();
+                Region r = new Region(nombre);
+                e.escribir(r);
+                if ((boolean) e.leer()) {
+                    JOptionPane.showMessageDialog(null, "Región registrada con exito!");
+                    limpiarTabla();
+                    cargarRegiones();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(frmRegiones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Rellene todos los campos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddRegionActionPerformed
 
     private void btnEliminarRegionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarRegionActionPerformed
-        // TODO add your handling code here:
+        try {
+            DefaultTableModel tm = (DefaultTableModel) tblRegiones.getModel();
+            String nombreRegion = String.valueOf(tm.getValueAt(tblRegiones.getSelectedRow(), 1));
+            e.escribir(true);
+            e.escribir(Constantes.BORRAR_REGION);
+            e.escribir(nombreRegion);
+            JOptionPane.showMessageDialog(null, "Usuario eliminado");
+            limpiarTabla();
+            cargarRegiones();
+        } catch (Exception e) {
+            Logger.getLogger(frmRegiones.class.getName()).log(Level.SEVERE, null, e);
+        }
+
     }//GEN-LAST:event_btnEliminarRegionActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        try {
+            cargarRegiones();
+        } catch (Exception ex) {
+            Logger.getLogger(frmRegiones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formComponentShown
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            e.escribir(false);
+            servidor.close();
+        } catch (Exception ex) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosed
+
+    private void tblRegionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRegionesMouseClicked
+        DefaultTableModel tm = (DefaultTableModel) tblRegiones.getModel();
+        String fila = String.valueOf(tm.getValueAt(tblRegiones.getSelectedRow(), 0));
+        if (!fila.equals("null")) {
+            btnEliminarRegion.setEnabled(true);
+            btnEliminarRegion.setEnabled(true);
+        } else {
+            btnEliminarRegion.setEnabled(false);
+            btnEliminarRegion.setEnabled(false);
+        }
+    }//GEN-LAST:event_tblRegionesMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddRegion;
@@ -189,7 +273,34 @@ public class frmRegiones extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblRegiones;
+    private javax.swing.JTextField txtNombreRegion;
     // End of variables declaration//GEN-END:variables
+
+    private void cargarRegiones() throws Exception {
+        DefaultTableModel tm = (DefaultTableModel) tblRegiones.getModel();
+        e.escribir(true);
+        e.escribir(Constantes.CARGAR_REGIONES);
+        int fila = 0;
+        limpiarTabla();
+        while ((boolean) e.leer()) {
+            Region r = (Region) e.leer();
+            tm.addRow(new Object[1]);
+            addRegion(r, fila);
+            fila++;
+        }
+    }
+
+    private void limpiarTabla() {
+        DefaultTableModel tb = (DefaultTableModel) tblRegiones.getModel();
+        int a = tblRegiones.getRowCount() - 1;
+        for (int i = a; i >= 0; i--) {
+            tb.removeRow(tb.getRowCount() - 1);
+        }
+    }
+
+    private void addRegion(Region r, int fila) {
+        tblRegiones.setValueAt(fila + 1, fila, 0);
+        tblRegiones.setValueAt(r.getRegion(), fila, 1);
+    }
 }

@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.PublicKey;
 import javax.crypto.SealedObject;
 
 /**
@@ -52,6 +53,10 @@ public class Escritor {
 
     public ObjectOutputStream oos() {
         return oos;
+    }
+
+    public void escribir(Object obj, PublicKey clavePublicaUsuario) throws Exception {
+        oos.writeObject(Seguridad.cifrarObjeto(obj, clavePublicaUsuario));
     }
 
 }

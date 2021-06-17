@@ -5,11 +5,13 @@
  */
 package objetos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ivanc
  */
-public class Incidencia {
+public class Incidencia implements Serializable{
     int region;
     String infectado, fecha;
 

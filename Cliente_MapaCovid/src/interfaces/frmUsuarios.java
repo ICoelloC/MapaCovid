@@ -6,6 +6,7 @@
 package interfaces;
 
 import ayuda.Constantes;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import objetos.Escritor;
 import objetos.Usuario;
+import objetos.Usuario_b;
 
 /**
  *
@@ -22,11 +24,12 @@ import objetos.Usuario;
 public class frmUsuarios extends javax.swing.JFrame {
 
     private JFrame principal;
-    private Usuario usuario;
+    //private Usuario usuario;
+    private Usuario_b usuario;
     private Escritor e;
     private Socket servidor;
 
-    public frmUsuarios(JFrame principal, Usuario usuario, Escritor e, Socket servidor) {
+    public frmUsuarios(JFrame principal, Usuario_b usuario, Escritor e, Socket servidor) {
         initComponents();
         this.principal = principal;
         this.usuario = usuario;
@@ -61,6 +64,14 @@ public class frmUsuarios extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gestión de Usuarios");
         setMaximumSize(new java.awt.Dimension(761, 355));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         pnlPrincipal.setBackground(new java.awt.Color(255, 255, 255));
         pnlPrincipal.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -211,12 +222,15 @@ public class frmUsuarios extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActivarUsuarioActionPerformed
 
     private void btnAddUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddUsuarioActionPerformed
-        // TODO add your handling code here:
+        frmRegistro frm = new frmRegistro(this, servidor, e);
+        this.setVisible(false);
+        frm.setVisible(true);
     }//GEN-LAST:event_btnAddUsuarioActionPerformed
 
     private void pnlPrincipalComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pnlPrincipalComponentShown
         try {
-            cargarUsuarios();
+            //cargarUsuarios();
+            cargarUsuariosB();
         } catch (Exception ex) {
             Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -234,6 +248,23 @@ public class frmUsuarios extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tblUsuariosMouseClicked
 
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        try {
+            e.escribir(false);
+            servidor.close();
+        } catch (Exception ex) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try {
+            cargarUsuariosB();
+        } catch (Exception ex) {
+            Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowOpened
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActivarUsuario;
     private javax.swing.JButton btnAddUsuario;
@@ -244,6 +275,15 @@ public class frmUsuarios extends javax.swing.JFrame {
     private javax.swing.JTable tblUsuarios;
     // End of variables declaration//GEN-END:variables
 
+    
+    private void limpiarTabla() {
+        DefaultTableModel tb = (DefaultTableModel) tblUsuarios.getModel();
+        int a = tblUsuarios.getRowCount() - 1;
+        for (int i = a; i >= 0; i--) {
+            tb.removeRow(tb.getRowCount() - 1);
+        }
+    }
+    
     private void cargarUsuarios() throws Exception {
         DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
         e.escribir(true);
@@ -258,14 +298,6 @@ public class frmUsuarios extends javax.swing.JFrame {
         }
     }
 
-    private void limpiarTabla() {
-        DefaultTableModel tb = (DefaultTableModel) tblUsuarios.getModel();
-        int a = tblUsuarios.getRowCount() - 1;
-        for (int i = a; i >= 0; i--) {
-            tb.removeRow(tb.getRowCount() - 1);
-        }
-    }
-
     private void addUser(Usuario u, int fila) {
         tblUsuarios.setValueAt(usuario.getEmail(), fila, 0);
         tblUsuarios.setValueAt(usuario.getNombre(), fila, 1);
@@ -276,5 +308,36 @@ public class frmUsuarios extends javax.swing.JFrame {
             rol = "Gestor";
         }
         tblUsuarios.setValueAt(rol, fila, 3);
+    }
+
+    private void cargarUsuariosB(){
+        try {
+            DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
+            e.escribir(true);
+            e.escribir(Constantes.CARGAR_USUARIOS);
+            int fila = 0;
+            limpiarTabla();
+            while ((boolean) e.leer()) {
+                Usuario_b u = (Usuario_b) e.leer();
+                tm.addRow(new Object[4]);
+                addUserB(u, fila);
+                fila++;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void addUserB(Usuario_b u, int fila) {
+        tblUsuarios.setValueAt(usuario.getEmail(), fila, 0);
+        tblUsuarios.setValueAt(usuario.getNombre(), fila, 1);
+        String rol;
+        if (usuario.getRol() == 1) {
+            rol = "Administrador";
+        } else {
+            rol = "Gestor";
+        }
+        tblUsuarios.setValueAt(rol, fila, 2);
+        tblUsuarios.setValueAt(usuario.isActivo(), fila, 3);
     }
 }

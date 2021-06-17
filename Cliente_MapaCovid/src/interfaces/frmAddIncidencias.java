@@ -9,6 +9,7 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import objetos.Escritor;
 import objetos.Usuario;
+import objetos.Usuario_b;
 
 /**
  *
@@ -18,10 +19,11 @@ public class frmAddIncidencias extends javax.swing.JFrame {
 
     private JFrame principal;
     private Socket servidor;
-    private Usuario usuario;
+    //private Usuario usuario;
+    private Usuario_b usuario;
     private Escritor e;
 
-    public frmAddIncidencias(JFrame principal, Usuario usuario , Escritor e, Socket servidor) {
+    public frmAddIncidencias(JFrame principal, Usuario_b usuario , Escritor e, Socket servidor) {
         initComponents();
         this.principal = principal;
         this.servidor = servidor;
@@ -51,6 +53,9 @@ public class frmAddIncidencias extends javax.swing.JFrame {
         cmbRegiones = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         txtNombreInfectado = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtFecha = new javax.swing.JTextField();
+        btnAddIncidencia = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Añadir Incidencias");
@@ -71,22 +76,43 @@ public class frmAddIncidencias extends javax.swing.JFrame {
 
         jLabel2.setText("Nombre del infectado");
 
+        jLabel3.setText("Fecha de infección");
+
+        txtFecha.setToolTipText("yyyy-mm-dd");
+
+        btnAddIncidencia.setText("Añadir incidencia");
+        btnAddIncidencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddIncidenciaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbRegiones, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbRegiones, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(56, 56, 56)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(txtNombreInfectado, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnVolver))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(140, 140, 140)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(332, 332, 332)
+                        .addComponent(btnVolver))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(301, 301, 301)
+                        .addComponent(btnAddIncidencia)))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -98,9 +124,15 @@ public class frmAddIncidencias extends javax.swing.JFrame {
                     .addComponent(cmbRegiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(txtNombreInfectado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 366, Short.MAX_VALUE)
+                .addGap(34, 34, 34)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addComponent(btnAddIncidencia)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnVolver)
-                .addGap(25, 25, 25))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -111,7 +143,7 @@ public class frmAddIncidencias extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -130,12 +162,19 @@ public class frmAddIncidencias extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnVolverActionPerformed
 
+    private void btnAddIncidenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddIncidenciaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddIncidenciaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddIncidencia;
     private javax.swing.JButton btnVolver;
     private javax.swing.JComboBox<String> cmbRegiones;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JTextField txtFecha;
     private javax.swing.JTextField txtNombreInfectado;
     // End of variables declaration//GEN-END:variables
 }

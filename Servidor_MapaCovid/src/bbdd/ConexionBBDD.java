@@ -13,22 +13,26 @@ import java.util.logging.Logger;
 import objetos.Incidencia;
 import objetos.Region;
 import objetos.Usuario;
-import utils.Constantes;
+import ayuda.Constantes;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Arrays;
+import objetos.Usuario_b;
 
 /**
  *
  * @author ivanc
  */
 public class ConexionBBDD {
-    
+
     private java.sql.Connection Conexion;
     private java.sql.Statement Senntencia_SQL;
     private java.sql.ResultSet Conj_registros;
 
     public ConexionBBDD() {
     }
-    
-    public void abrirConexion(){
+
+    public void abrirConexion() {
         try {
             String controlador = "com.mysql.jdbc.Driver";
             Class.forName(controlador).newInstance();
@@ -36,14 +40,13 @@ public class ConexionBBDD {
             Conexion = java.sql.DriverManager.getConnection(URL_BD, Constantes.usuariobd, Constantes.passwdbd);
             Senntencia_SQL = Conexion.createStatement();
             System.out.println("Conexion realizada con exito");
-            
+
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             ex.printStackTrace();
         }
     }
-    
-    
-    public void cerrarConexion(){
+
+    public void cerrarConexion() {
         try {
             this.Conexion.close();
             System.out.println("BBDD conexion cerrada");
@@ -51,10 +54,10 @@ public class ConexionBBDD {
             Logger.getLogger(ConexionBBDD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public int obtenerDatosTabla(String nombre_tabla){
+
+    public int obtenerDatosTabla(String nombre_tabla) {
         int codigo = 0;
-        String select = "SELECT * FROM " +nombre_tabla;
+        String select = "SELECT * FROM " + nombre_tabla;
         try {
             Conj_registros = Senntencia_SQL.executeQuery(select);
         } catch (SQLException ex) {
@@ -62,8 +65,8 @@ public class ConexionBBDD {
         }
         return codigo;
     }
-    
-    public void mostrarFilaActual(){
+
+    public void mostrarFilaActual() {
         int i, Num_Cols;
         try {
             Num_Cols = Conj_registros.getMetaData().getColumnCount();
@@ -73,19 +76,20 @@ public class ConexionBBDD {
         } catch (SQLException ex) {
         }
     }
-    
-    public void mostrarTabla(String tabla){
+
+    public void mostrarTabla(String tabla) {
         try {
             obtenerDatosTabla(tabla);
-            while (Conj_registros.next()){
+            while (Conj_registros.next()) {
                 mostrarFilaActual();
             }
-        } catch (SQLException ex) {}
+        } catch (SQLException ex) {
+        }
     }
-    
+
     public int modificarDato(String tabla, String campo, String where, String Nuevo_Nombre) {
         int cod = 0;
-        String Sentencia = "UPDATE " + tabla + " SET " + campo + " = '" + Nuevo_Nombre + "' WHERE " + where;        
+        String Sentencia = "UPDATE " + tabla + " SET " + campo + " = '" + Nuevo_Nombre + "' WHERE " + where;
         try {
             Senntencia_SQL.executeUpdate(Sentencia);
         } catch (SQLException ex) {
@@ -93,9 +97,9 @@ public class ConexionBBDD {
         }
         return cod;
     }
-    
-    public int insertarUsuario(String nick, String email, String pass, String key, int rol){
-        String insert = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES ('" + nick + "'," + "'" + email + "'," + "'" + pass + "'," + "'" + key + "'," + "'" + rol + "')";
+
+    public int insertarUsuario(String nick, String email, int rol, byte[] pass, PrivateKey clavePriv, PublicKey clavePub, boolean activo) {
+        String insert = "INSERT INTO " + Constantes.TablaUsuarios + " VALUES (" + null + "'" + nick + "'," + "'" + email + "'," + "" + rol + "," + "'" + Arrays.toString(pass) + "'," + "'" + clavePriv + "', " + "'" + clavePriv + "', " + activo + ")";
         int cod = 0;
         try {
             Senntencia_SQL.executeUpdate(insert);
@@ -104,8 +108,24 @@ public class ConexionBBDD {
         }
         return cod;
     }
-    
-    public int borrarDato(String tabla, String where){
+
+    public int insertarUsuarioB(String nick, String email, int rol, String pass, boolean activo) {
+        if (rol == 2){
+            activo = false;
+        }else{
+            activo = true;
+        }   
+        String insert = "INSERT INTO " + Constantes.TablaUsuariosB + " VALUES (" + null + ", '" + nick + "', '" + email + "', '" +pass+ "'," +rol+ ", "+activo+ ")";
+        int cod = 0;
+        try {
+            Senntencia_SQL.executeUpdate(insert);
+        } catch (SQLException sq) {
+            cod = sq.getErrorCode();
+        }
+        return cod;
+    }
+
+    public int borrarDato(String tabla, String where) {
         int cod = 0;
         String Sentencia = "DELETE FROM " + tabla + " WHERE " + where;
         try {
@@ -115,9 +135,9 @@ public class ConexionBBDD {
         }
         return cod;
     }
-    
+
     public Usuario getUsuario(String where) throws SQLException {
-        String sentencia = "SELECT * from " + Constantes.TablaUsuarios + " WHERE " + where;        
+        String sentencia = "SELECT * from " + Constantes.TablaUsuarios + " WHERE " + where;
         ResultSet usuarios = Senntencia_SQL.executeQuery(sentencia);
         if (usuarios.next()) {
             Usuario u = new Usuario();
@@ -131,15 +151,15 @@ public class ConexionBBDD {
             return null;
         }
     }
-    
-    public Region getRegion(String where) throws SQLException{
+
+    public Region getRegion(String where) throws SQLException {
         String sentencia = "SELECT * from " + Constantes.TablaRegiones + " WHERE " + where;
         ResultSet regiones = Senntencia_SQL.executeQuery(sentencia);
         if (regiones.next()) {
             Region r = new Region();
             r.setRegion(regiones.getString(Constantes.regionesRegion));
             return r;
-        }else{
+        } else {
             return null;
         }
     }
@@ -154,15 +174,32 @@ public class ConexionBBDD {
         }
     }
 
-    public boolean existeRegion(String where) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int insertarRegion(String nombreRegion) {
+        String Sentencia = "INSERT INTO " + Constantes.TablaRegiones + " VALUES ("+null+", '" + nombreRegion + "')";
+        int cod = 0;
+        try {
+            Senntencia_SQL.executeUpdate(Sentencia);
+        } catch (SQLException sql) {
+            cod = sql.getErrorCode();
+        }
+        return cod;
     }
-    
-    public ArrayList<Incidencia> mostrarTodasLasIncidencias() throws SQLException{
-        ArrayList<Incidencia> listaIncidencias=new ArrayList<>();
+
+    public boolean existeRegion(String where) throws SQLException {
+        String sentencia = "SELECT * from " + Constantes.TablaRegiones + " WHERE " + where;
+        Conj_registros = Senntencia_SQL.executeQuery(sentencia);
+        if (Conj_registros.next()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public ArrayList<Incidencia> mostrarTodasLasIncidencias() throws SQLException {
+        ArrayList<Incidencia> listaIncidencias = new ArrayList<>();
         String sentencia = "SELECT * from " + Constantes.TablaIncidencias;
         ResultSet incidencias = Senntencia_SQL.executeQuery(sentencia);
-        while (incidencias.next()){
+        while (incidencias.next()) {
             Incidencia i = new Incidencia();
             i.setRegion(incidencias.getInt(Constantes.incidenciasRegion));
             i.setInfectado(incidencias.getString(Constantes.incidenciasInfectado));
@@ -171,5 +208,55 @@ public class ConexionBBDD {
         }
         return listaIncidencias;
     }
-    
+
+    public void modRegion(Region r) {
+        borrarDato(Constantes.TablaRegiones, (Constantes.regionesRegion + " = '" + r.getRegion() + "'"));
+        insertarRegion(r.getRegion());
+    }
+
+    public ArrayList<Region> mostrarTodasLasRegiones() throws SQLException {
+        ArrayList<Region> listaRegions = new ArrayList<>();
+        String sentencia = "SELECT * from " + Constantes.TablaRegiones;
+        ResultSet regiones = Senntencia_SQL.executeQuery(sentencia);
+        while (regiones.next()) {
+            Region r = new Region();
+            r.setRegion(regiones.getString(Constantes.regionesRegion));
+            listaRegions.add(r);
+        }
+        return listaRegions;
+    }
+
+    public Usuario_b getUsuarioB(String where) throws SQLException {
+        String sentencia = "SELECT * from " + Constantes.TablaUsuariosB + " WHERE " + where;        
+        ResultSet usuarios = Senntencia_SQL.executeQuery(sentencia);
+        if (usuarios.next()) {
+            Usuario_b u = new Usuario_b();
+            u.setEmail(usuarios.getString(Constantes.usuariosBEmail));
+            u.setNombre(usuarios.getString(Constantes.usuariosBNombre));
+            u.setPassresumida(usuarios.getBytes(Constantes.usuariosBPass));
+            u.setRol(usuarios.getInt(Constantes.usuariosRol));
+            u.setActivo(usuarios.getBoolean(Constantes.usuariosBActivo));
+            return u;
+        } else {
+            return null;
+        }
+    }
+
+    public ArrayList<Usuario_b> listaUsuariosB(Usuario_b conectado) throws SQLException {
+        ArrayList<Usuario_b> ListaUsuario_b = new ArrayList<>();
+        //String sentencia = "SELECT * from "+Constantes.TablaUsuariosB+" WHERE "+Constantes.usuariosBEmail+" != '"+conectado.getEmail()+"'";
+        String sentencia = "SELECT * FROM " + Constantes.TablaUsuariosB;
+        ResultSet usuarios = Senntencia_SQL.executeQuery(sentencia);
+        while(usuarios.next()){
+            Usuario_b u= new Usuario_b();
+            u.setEmail(usuarios.getString(Constantes.usuariosBEmail));
+            u.setNombre(usuarios.getString(Constantes.usuariosBNombre));
+            //u.setPassresumida(usuarios.getBytes(Constantes.usuariosBPass));
+            u.setRol(usuarios.getInt(Constantes.usuariosBRol));
+            u.setActivo(usuarios.getBoolean(Constantes.usuariosBActivo));
+            ListaUsuario_b.add(u);
+        }
+        return ListaUsuario_b;
+    }
+
 }

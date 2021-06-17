@@ -5,11 +5,13 @@
  */
 package objetos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ivanc
  */
-public class Region {
+public class Region implements Serializable{
     
     private String region;
 

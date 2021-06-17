@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import objetos.Escritor;
 import objetos.Usuario;
+import objetos.Usuario_b;
 import seguridad.Seguridad;
 
 /**
@@ -28,6 +29,7 @@ public class frmRegistro extends javax.swing.JFrame {
     String pass;
     String username;
     int rol;
+    boolean activo;
 
     public frmRegistro(JFrame principal, Socket servidor, Escritor e) {
         this.principal = principal;
@@ -76,7 +78,7 @@ public class frmRegistro extends javax.swing.JFrame {
 
         jLabel5.setText("Rol del usuario:");
 
-        cmbRoles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un rol", "Gestor", "Admin" }));
+        cmbRoles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un rol", "Admin", "Gestor" }));
 
         registerVolverBTN.setText("Volver");
         registerVolverBTN.setToolTipText("");
@@ -204,21 +206,33 @@ public class frmRegistro extends javax.swing.JFrame {
                 pass = txtPasss.getText();
                 username = txtUsername.getText();
                 rol = cmbRoles.getSelectedIndex();
-                Object[] claves = Seguridad.generarClaves();
-                
-                PrivateKey cpriv = (PrivateKey) claves[0];
-                PublicKey cpub = (PublicKey) claves[1];
-                /*Usuario u = new Usuario(email, username, rol, Seguridad.resumir(pass), cpriv, cpub);
+                activo = rol != 1;
+
+                Usuario_b u = new Usuario_b(email, username, rol, Seguridad.resumir(pass), activo);
                 e.escribir(u);
-                if((boolean) e.leer()){
+                if ((boolean) e.leer()) {
                     limpiarFormulario();
                     JOptionPane.showMessageDialog(null, "Usuario registrado con exito!");
                     volverALogin();
                 }
-                */
+                /*
+                Object[] claves = Seguridad.generarClaves();
+                PrivateKey cpriv = (PrivateKey) claves[0];
+                PublicKey cpub = (PublicKey) claves[1];
+                //byte[] passResumida = Seguridad.resumir(pass);
+                //Usuario u = new Usuario(email, username, rol, passResumida, cpriv, cpub, activo);
+                byte[] passCifrada = Seguridad.cifrarAsimetrico(pass, cpub);
+                Usuario u = new Usuario(email, username, rol, passCifrada, cpriv, cpub, activo);
+                e.escribir(u);
+                if ((boolean) e.leer()){
+                    limpiarFormulario();
+                    JOptionPane.showMessageDialog(null, "Usuario registrado con exito!");
+                    volverALogin();
+                }
+                 */
             }
         } catch (Exception e) {
-
+            JOptionPane.showMessageDialog(null, "Se ha producido un error al insertar el usuario: " + e.getLocalizedMessage());
         }
 
     }//GEN-LAST:event_registerRegistrarBTNActionPerformed

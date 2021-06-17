@@ -28,7 +28,7 @@ public class Seguridad {
         Object[] claves = new Object[2];
         KeyPairGenerator KeyGen = KeyPairGenerator.getInstance("RSA");
         SecureRandom numero = SecureRandom.getInstance("SHA1PRNG");
-        KeyGen.initialize(4096, numero);
+        KeyGen.initialize(1024, numero);
         KeyPair par = KeyGen.generateKeyPair();
         PrivateKey clavepriv = par.getPrivate();
         PublicKey clavepubl = par.getPublic();
