@@ -183,16 +183,21 @@ public class frmLogin extends javax.swing.JFrame {
                 e.escribir(u);
                 if ((boolean) e.leer()) {
                     u = getUserB(email);
-                    JOptionPane.showMessageDialog(null, "Ha iniciado sesión con exito", "INFO", JOptionPane.INFORMATION_MESSAGE);
-                    if (isAdmin(u)) {
-                        frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
-                        frm.setVisible(true);
-                        this.setVisible(false);
-                    } else {
-                        frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
-                        frm.setVisible(true);
-                        this.setVisible(false);
+                    if (u.isActivo()) {
+                        JOptionPane.showMessageDialog(null, "Ha iniciado sesión con exito", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                        if (isAdmin(u)) {
+                            frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
+                            frm.setVisible(true);
+                            this.setVisible(false);
+                        } else {
+                            frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
+                            frm.setVisible(true);
+                            this.setVisible(false);
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(null, "El usuario no ha sido activado", "INFO", JOptionPane.INFORMATION_MESSAGE);
                     }
+
                 } else {
                     JOptionPane.showMessageDialog(null, "Usuario o contraseña erroneos", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }

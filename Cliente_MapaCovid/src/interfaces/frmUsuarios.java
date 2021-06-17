@@ -189,11 +189,12 @@ public class frmUsuarios extends javax.swing.JFrame {
     private void btnBorrarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarUsuarioActionPerformed
         try {
             DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
-            String email = String.valueOf(tm.getValueAt(tblUsuarios.getSelectedRow(), 1));
+            String email = String.valueOf(tm.getValueAt(tblUsuarios.getSelectedRow(), 0));
             e.escribir(true);
             e.escribir(Constantes.BORRAR_USUARIO);
             e.escribir(email);
             JOptionPane.showMessageDialog(null, "Usuario eliminado");
+            limpiarTabla();
             cargarUsuarios();
         } catch (Exception e) {
             Logger.getLogger(frmUsuarios.class.getName()).log(Level.SEVERE, null, e);

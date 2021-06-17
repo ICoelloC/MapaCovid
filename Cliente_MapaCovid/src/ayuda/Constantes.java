@@ -61,8 +61,10 @@ public class Constantes {
     //--------------- TABLA INCIDENCIAS ----------------------
     public static final String TablaIncidencias = "incidencias";
     public static final String incidenciasRegion = "region";
-    public static final String incidenciasInfectado = "infectado";
     public static final String incidenciasFecha = "fecha";
+    public static final String incidenciasInfectados = "infectados";
+    public static final String incidenciasFallecidos = "fallecidos";
+    public static final String incidenciasDadosAlta = "dadosAlta";
     
     //--------------- TABLA USUARIOS_B ----------------------
     public static final String TablaUsuariosB = "usuarios_b";

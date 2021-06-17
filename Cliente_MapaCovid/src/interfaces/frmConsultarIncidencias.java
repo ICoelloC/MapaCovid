@@ -90,17 +90,17 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
 
         tblIncidencias.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Region", "Infectado", "Fecha"
+                "Region", "Fecha", "Infectados", "Fallecidos", "Dados de alta"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -227,7 +227,7 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
             limpiarTabla();
             while ((boolean) e.leer()) {
                 Incidencia i = (Incidencia) e.leer();
-                tm.addRow(new Object[3]);
+                tm.addRow(new Object[5]);
                 addIncidencia(i, fila);
                 fila++;
             }
@@ -246,7 +246,9 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
 
     private void addIncidencia(Incidencia i, int fila) {
         tblIncidencias.setValueAt(i.getRegion(), fila, 0);
-        tblIncidencias.setValueAt(i.getInfectado(), fila, 1);
-        tblIncidencias.setValueAt(i.getFecha(), fila, 2);
+        tblIncidencias.setValueAt(i.getFecha(), fila, 1);
+        tblIncidencias.setValueAt(i.getInfectados(), fila, 2);
+        tblIncidencias.setValueAt(i.getFallecidos(), fila, 3);
+        tblIncidencias.setValueAt(i.getDadosAlta(), fila, 4);
     }
 }

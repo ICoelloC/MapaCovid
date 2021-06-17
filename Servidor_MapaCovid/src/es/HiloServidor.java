@@ -228,7 +228,7 @@ class HiloServidor extends Thread {
     private void addIncidencia() throws Exception {
         Incidencia i = (Incidencia) e.leer();
         conexion.abrirConexion();
-        conexion.insertarIncidencia(i.getRegion(), i.getInfectado(), i.getFecha());
+        conexion.insertarIncidencia(i.getRegion(), i.getFecha(), i.getInfectados(), i.getFallecidos(), i.getDadosAlta());
         conexion.cerrarConexion();
         e.escribir(true);
     }
@@ -237,8 +237,11 @@ class HiloServidor extends Thread {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void borrarUsuario() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void borrarUsuario() throws Exception {
+        String email = (String) e.leer();
+        conexion.abrirConexion();
+        conexion.borrarDato(Constantes.TablaUsuariosB, where(Constantes.usuariosBEmail, "=", email));
+        conexion.cerrarConexion();
     }
     
     private void activarUsuario() throws Exception {
@@ -326,7 +329,7 @@ class HiloServidor extends Thread {
     private void activarDesactivar(boolean activar) throws Exception {
         conexion.abrirConexion();
         String email = (String) e.leer();
-        String activo;
+        String activo = "";
         if (activar){
             activo = "true";
         }else{

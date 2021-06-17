@@ -109,8 +109,8 @@ public class ConexionBBDD {
         return cod;
     }
     
-    public int insertarIncidencia(int region, String infectado, String fecha) {
-        String insert = "INSERT INTO " + Constantes.TablaIncidencias + " VALUES (" + null + ", " + region + ", '"+infectado+"', '"+ fecha +"')";
+    public int insertarIncidencia(int region, String fecha, int infectados, int fallecidos, int dadosAlta) {
+        String insert = "INSERT INTO " + Constantes.TablaIncidencias + " VALUES (" + null + ", " + region +", '"+ fecha +"', "+infectados+", " + fallecidos +", "+dadosAlta+")";
         int cod = 0;
         try{
             Senntencia_SQL.executeUpdate(insert);
@@ -213,8 +213,10 @@ public class ConexionBBDD {
         while (incidencias.next()) {
             Incidencia i = new Incidencia();
             i.setRegion(incidencias.getInt(Constantes.incidenciasRegion));
-            i.setInfectado(incidencias.getString(Constantes.incidenciasInfectado));
             i.setFecha(incidencias.getString(Constantes.incidenciasFecha));
+            i.setInfectados(incidencias.getInt(Constantes.incidenciasInfectados));
+            i.setFallecidos(incidencias.getInt(Constantes.incidenciasFallecidos));
+            i.setDadosAlta(incidencias.getInt(Constantes.incidenciasDadosAlta));
             listaIncidencias.add(i);
         }
         return listaIncidencias;
@@ -267,6 +269,17 @@ public class ConexionBBDD {
             ListaUsuario_b.add(u);
         }
         return ListaUsuario_b;
+    }
+
+    public int modificarDato(String tabla, String campo, String where, boolean activo) {
+        int cod = 0;
+        String Sentencia = "UPDATE " + tabla + " SET " + campo + " = '" + activo + "' WHERE " + where;
+        try {
+            Senntencia_SQL.executeUpdate(Sentencia);
+        } catch (SQLException ex) {
+            cod = ex.getErrorCode();
+        }
+        return cod;
     }
 
 }

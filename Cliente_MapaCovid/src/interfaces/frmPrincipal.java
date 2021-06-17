@@ -39,11 +39,13 @@ public class frmPrincipal extends javax.swing.JFrame {
             btnGestionarRegiones.setToolTipText("Acceso restringido");
             btnAddIncidencias.setEnabled(false);
             btnAddIncidencias.setToolTipText("Acceso restringido");
-        }
-        if (this.usuario_b.getRol() == 2) {
+        }else{
+            if (this.usuario_b.getRol() == 2) {
             btnGestionarUsuarios.setEnabled(false);
             btnGestionarUsuarios.setToolTipText("Acceso restringido");
         }
+        }
+        
     }
 
     public frmPrincipal() {
