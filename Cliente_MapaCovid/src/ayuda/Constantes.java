@@ -29,6 +29,7 @@ public class Constantes {
     public static final int CARGAR_REGIONES = 14;
     public static final int ADD_REGION = 15;
     public static final int BORRAR_REGION = 16;
+    public static final int CONSULTAR_INCIDENCIAS = 17;
 
     //--------------- valores ----------------------
     public static final int ROL_ADMINISTRADOR = 1;
@@ -65,7 +66,7 @@ public class Constantes {
     public static final String incidenciasInfectados = "infectados";
     public static final String incidenciasFallecidos = "fallecidos";
     public static final String incidenciasDadosAlta = "dadosAlta";
-    
+
     //--------------- TABLA USUARIOS_B ----------------------
     public static final String TablaUsuariosB = "usuarios_b";
     public static final String usuariosBEmail = "email";
@@ -73,5 +74,5 @@ public class Constantes {
     public static final String usuariosBPass = "pass";
     public static final String usuariosBRol = "rol";
     public static final String usuariosBActivo = "activo";
-    
+
 }

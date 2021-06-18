@@ -114,6 +114,9 @@ class HiloServidor extends Thread {
                     case Constantes.BORRAR_REGION:
                         delRegion();
                         break;
+                    case Constantes.CONSULTAR_INCIDENCIAS:
+                        buscarIncidencias();
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -343,6 +346,18 @@ class HiloServidor extends Thread {
         String nombreREgion = (String) e.leer();
         conexion.abrirConexion();
         conexion.borrarDato(Constantes.TablaRegiones, where(Constantes.regionesRegion, "=", nombreREgion));
+        conexion.cerrarConexion();
+    }
+
+    private void buscarIncidencias() throws Exception {
+        Incidencia i = (Incidencia) e.leer();
+        conexion.abrirConexion();
+        ArrayList<Incidencia> incidencias = conexion.listaIncidencias(i);
+        for (Incidencia incidencia : incidencias) {
+            e.escribir(true);
+            e.escribir(incidencia);
+        }
+        e.escribir(false);
         conexion.cerrarConexion();
     }
 

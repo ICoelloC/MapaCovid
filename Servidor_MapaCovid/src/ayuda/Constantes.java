@@ -29,6 +29,7 @@ public class Constantes {
     public static final int CARGAR_REGIONES = 14;
     public static final int ADD_REGION = 15;
     public static final int BORRAR_REGION = 16;
+    public static final int CONSULTAR_INCIDENCIAS = 17;
 
     //--------------- valores ----------------------
     public static final int ROL_ADMINISTRADOR = 1;

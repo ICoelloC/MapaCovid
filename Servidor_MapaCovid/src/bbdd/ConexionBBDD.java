@@ -282,4 +282,21 @@ public class ConexionBBDD {
         return cod;
     }
 
+    public ArrayList<Incidencia> listaIncidencias(Incidencia i) throws SQLException {
+        ArrayList<Incidencia> ListaIncidencias = new ArrayList<>();
+        String sentencia = "SELECT * from "+Constantes.TablaIncidencias+" WHERE "+Constantes.incidenciasFecha+" = '"+i.getFecha()+"' AND "+Constantes.incidenciasRegion+" = "+i.getRegion();
+        //String sentencia = "SELECT * FROM " + Constantes.TablaUsuariosB;
+        ResultSet incidencias = Senntencia_SQL.executeQuery(sentencia);
+        while(incidencias.next()){
+            Incidencia inci= new Incidencia();
+            inci.setFecha(incidencias.getString(Constantes.incidenciasFecha));
+            inci.setRegion(incidencias.getInt(Constantes.incidenciasRegion));
+            inci.setInfectados(incidencias.getInt(Constantes.incidenciasInfectados));
+            inci.setFallecidos(incidencias.getInt(Constantes.incidenciasFallecidos));
+            inci.setDadosAlta(incidencias.getInt(Constantes.incidenciasDadosAlta));
+            ListaIncidencias.add(inci);
+        }
+        return ListaIncidencias;
+    }
+
 }

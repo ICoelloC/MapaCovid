@@ -23,6 +23,11 @@ public class Incidencia implements Serializable{
         this.fallecidos = fallecidos;
         this.dadosAlta = dadosAlta;
     }
+    
+    public Incidencia(int region, String fecha) {
+        this.region = region;
+        this.fecha = fecha;
+    }
 
     public Incidencia() {
     }

@@ -10,9 +10,11 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import objetos.Escritor;
 import objetos.Incidencia;
+import objetos.Region;
 import objetos.Usuario;
 import objetos.Usuario_b;
 
@@ -27,6 +29,8 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
     //private Usuario usuario;
     private Usuario_b usuario;
     private Escritor e;
+    private String fecha;
+    private int region;
 
     public frmConsultarIncidencias(JFrame principal, Usuario_b usuario, Escritor e, Socket servidor) {
         initComponents();
@@ -59,6 +63,9 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtFecha = new javax.swing.JTextField();
         btnBuscar = new javax.swing.JButton();
+        cmbRegiones = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        btnVerTodas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Consultar Incidencias");
@@ -71,6 +78,9 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -120,6 +130,15 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Region");
+
+        btnVerTodas.setText("Ver todas");
+        btnVerTodas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerTodasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -134,26 +153,37 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 331, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(191, 191, 191)
+                .addGap(120, 120, 120)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnBuscar)
-                .addGap(330, 330, 330))
+                .addGap(105, 105, 105))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(61, 61, 61)
+                .addComponent(cmbRegiones, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnBuscar)
+                    .addComponent(btnVerTodas))
+                .addGap(69, 69, 69)
+                .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(73, 73, 73))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+                .addGap(8, 8, 8)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(23, 23, 23)
-                .addComponent(btnBuscar)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbRegiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnVerTodas))
                 .addGap(18, 18, 18)
+                .addComponent(btnBuscar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnVolver)
@@ -188,7 +218,7 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void jPanel2ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel2ComponentShown
-        
+
     }//GEN-LAST:event_jPanel2ComponentShown
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -205,12 +235,52 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        if (txtFecha.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Rellene el campo fecha");
+        } else {
+            try {
+                DefaultTableModel tm = (DefaultTableModel) tblIncidencias.getModel();
+                e.escribir(true);
+                e.escribir(Constantes.CONSULTAR_INCIDENCIAS);
+                fecha = txtFecha.getText();
+                region = cmbRegiones.getSelectedIndex() + 1;
+                Incidencia i = new Incidencia(region, fecha);
+                e.escribir(i);
+                limpiarTabla();
+                int fila = 0;
+                while ((boolean) e.leer()) {
+                    Incidencia incidencia = (Incidencia) e.leer();
+                    tm.addRow(new Object[5]);
+                    addIncidencia(incidencia, fila);
+                    fila++;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(frmConsultarIncidencias.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+
     }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try {
+            cargarComboRegiones();
+        } catch (Exception ex) {
+            Logger.getLogger(frmAddIncidencias.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowOpened
+
+    private void btnVerTodasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerTodasActionPerformed
+        txtFecha.setText("");
+        cargarIncidencias();
+    }//GEN-LAST:event_btnVerTodasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnVerTodas;
     private javax.swing.JButton btnVolver;
+    private javax.swing.JComboBox<String> cmbRegiones;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -250,5 +320,14 @@ public class frmConsultarIncidencias extends javax.swing.JFrame {
         tblIncidencias.setValueAt(i.getInfectados(), fila, 2);
         tblIncidencias.setValueAt(i.getFallecidos(), fila, 3);
         tblIncidencias.setValueAt(i.getDadosAlta(), fila, 4);
+    }
+
+    private void cargarComboRegiones() throws Exception {
+        e.escribir(true);
+        e.escribir(Constantes.CARGAR_REGIONES);
+        while ((boolean) e.leer()) {
+            Region r = (Region) e.leer();
+            cmbRegiones.addItem(r.getRegion());
+        }
     }
 }
