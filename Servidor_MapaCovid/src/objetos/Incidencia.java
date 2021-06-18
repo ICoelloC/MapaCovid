@@ -5,17 +5,27 @@
  */
 package objetos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ivanc
  */
-public class Incidencia {
+public class Incidencia implements Serializable{
     int region;
-    String infectado, fecha;
+    String fecha;
+    int infectados, fallecidos, dadosAlta;
 
-    public Incidencia(int region, String infectado, String fecha) {
+    public Incidencia(int region, String fecha, int infectados, int fallecidos, int dadosAlta) {
         this.region = region;
-        this.infectado = infectado;
+        this.fecha = fecha;
+        this.infectados = infectados;
+        this.fallecidos = fallecidos;
+        this.dadosAlta = dadosAlta;
+    }
+    
+    public Incidencia(int region, String fecha) {
+        this.region = region;
         this.fecha = fecha;
     }
 
@@ -30,13 +40,31 @@ public class Incidencia {
         this.region = region;
     }
 
-    public String getInfectado() {
-        return infectado;
+    public int getInfectados() {
+        return infectados;
     }
 
-    public void setInfectado(String infectado) {
-        this.infectado = infectado;
+    public void setInfectados(int infectados) {
+        this.infectados = infectados;
     }
+
+    public int getFallecidos() {
+        return fallecidos;
+    }
+
+    public void setFallecidos(int fallecidos) {
+        this.fallecidos = fallecidos;
+    }
+
+    public int getDadosAlta() {
+        return dadosAlta;
+    }
+
+    public void setDadosAlta(int dadosAlta) {
+        this.dadosAlta = dadosAlta;
+    }
+
+    
 
     public String getFecha() {
         return fecha;

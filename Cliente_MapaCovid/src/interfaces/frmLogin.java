@@ -9,14 +9,19 @@ import ayuda.Constantes;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.crypto.KeyGenerator;
 import javax.swing.JOptionPane;
 import objetos.Claves;
 import objetos.Escritor;
 import objetos.Usuario;
+import objetos.Usuario_b;
 import seguridad.Seguridad;
 
 /**
@@ -37,14 +42,13 @@ public class frmLogin extends javax.swing.JFrame {
      */
     public frmLogin() throws Exception {
         initComponents();
-        /*
         InetAddress dir = InetAddress.getLocalHost();
         this.servidor = new Socket(dir, 1050);
         Claves claves = new Claves();
         Escritor e = new Escritor(servidor, claves);
+        gestionClaves(claves, e);
         this.claves = claves;
         this.e = e;
-        */
     }
 
     /**
@@ -168,18 +172,38 @@ public class frmLogin extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         if (loginCorreoTXT.getText().isEmpty() || loginPassTXT.getText().isEmpty()) {
-
             JOptionPane.showMessageDialog(null, "Rellene todos los campos");
-
         } else if (comprobarFormulario()) {
-
             try {
                 e.escribir(true);
                 e.escribir(Constantes.LOGEAR);
-                String email = loginCorreoTXT.getText().toLowerCase();
+                String email = loginCorreoTXT.getText();
                 String pass = loginPassTXT.getText();
-                Usuario u = new Usuario(email, Seguridad.resumir(pass));
+                Usuario_b u = new Usuario_b(email, Seguridad.resumir(pass));
                 e.escribir(u);
+                if ((boolean) e.leer()) {
+                    u = getUserB(email);
+                    if (u.isActivo()) {
+                        JOptionPane.showMessageDialog(null, "Ha iniciado sesión con exito", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                        if (isAdmin(u)) {
+                            frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
+                            frm.setVisible(true);
+                            this.setVisible(false);
+                        } else {
+                            frmPrincipal frm = new frmPrincipal(this, u, e, servidor);
+                            frm.setVisible(true);
+                            this.setVisible(false);
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(null, "El usuario no ha sido activado", "INFO", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña erroneos", "ERROR", JOptionPane.WARNING_MESSAGE);
+                }
+                /*
+                Usuario u = new Usuario(email, Seguridad.resumir(pass));
+                e.escribir(u, u.getClavePublicaUsuario());
                 if ((boolean) e.leer()) {
                     u = getUser(email);
                     JOptionPane.showMessageDialog(null, "Ha iniciado sesión con exito", "INFO", JOptionPane.INFORMATION_MESSAGE);
@@ -187,7 +211,7 @@ public class frmLogin extends javax.swing.JFrame {
                     frm.setVisible(true);
                     this.dispose();
                 }
-
+                 */
             } catch (Exception ex) {
                 java.util.logging.Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -281,5 +305,30 @@ public class frmLogin extends javax.swing.JFrame {
         e.escribir(email);
         Usuario u = (Usuario) e.leer();
         return u;
+    }
+
+    private Usuario_b getUserB(String email) throws Exception {
+        e.escribir(true);
+        e.escribir(Constantes.GET_USER);
+        e.escribir(email);
+        Usuario_b u = (Usuario_b) e.leer();
+        return u;
+    }
+
+    private void gestionClaves(Claves claves, Escritor e) throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair par = keyGen.generateKeyPair();
+        claves.setPrivada(par.getPrivate());
+        claves.setPublica(par.getPublic());
+
+        //Mandamos la clave publica al otro extremo
+        e.oos().writeObject(claves.getPublica());
+        //Recibimos la clave del otro extremo
+        claves.setOtroExtremo((PublicKey) e.ois().readObject());
+    }
+
+    private boolean isAdmin(Usuario_b u) {
+        return u.getRol() == 1;
     }
 }

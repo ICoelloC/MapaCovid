@@ -9,8 +9,10 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import objetos.Claves;
 import objetos.Escritor;
 import objetos.Usuario;
+import objetos.Usuario_b;
 
 /**
  *
@@ -20,26 +22,30 @@ public class frmPrincipal extends javax.swing.JFrame {
 
     private JFrame principal;
     private Socket servidor;
-    private Usuario usuario;
+    //private Usuario usuario;
+    private Usuario_b usuario_b;
     private Escritor e;
 
-    frmPrincipal(JFrame principal, Usuario u, Escritor e, Socket servidor) {
+    frmPrincipal(JFrame principal, Usuario_b u, Escritor e, Socket servidor) {
         initComponents();
         this.principal = principal;
         this.e = e;
-        this.usuario = u;
+        this.usuario_b = u;
         this.servidor = servidor;
-        if (this.usuario == null) {
+        if (this.usuario_b == null) {
             btnGestionarUsuarios.setEnabled(false);
             btnGestionarUsuarios.setToolTipText("Acceso restringido");
             btnGestionarRegiones.setEnabled(false);
             btnGestionarRegiones.setToolTipText("Acceso restringido");
             btnAddIncidencias.setEnabled(false);
             btnAddIncidencias.setToolTipText("Acceso restringido");
-        } else if (this.usuario.getRol() == 2) {
+        }else{
+            if (this.usuario_b.getRol() == 2) {
             btnGestionarUsuarios.setEnabled(false);
             btnGestionarUsuarios.setToolTipText("Acceso restringido");
         }
+        }
+        
     }
 
     public frmPrincipal() {
@@ -155,37 +161,36 @@ public class frmPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConsultarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarDatosActionPerformed
-        if (this.usuario == null) {
+        if (this.usuario_b == null) {
             frmConsultarIncidencias incidencias = new frmConsultarIncidencias(this, null, e, servidor);
             incidencias.setVisible(true);
             this.setVisible(false);
         } else {
-            frmConsultarIncidencias incidencias = new frmConsultarIncidencias(this, usuario, e, servidor);
+            frmConsultarIncidencias incidencias = new frmConsultarIncidencias(this, usuario_b, e, servidor);
             incidencias.setVisible(true);
             this.setVisible(false);
         }
     }//GEN-LAST:event_btnConsultarDatosActionPerformed
 
     private void btnAddIncidenciasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddIncidenciasActionPerformed
-        if (this.usuario == null) {
+        if (this.usuario_b == null) {
             frmAddIncidencias incidencias = new frmAddIncidencias(this, null, e, servidor);
             incidencias.setVisible(true);
             this.setVisible(false);
         } else {
-            frmAddIncidencias incidencias = new frmAddIncidencias(this, usuario, e, servidor);
+            frmAddIncidencias incidencias = new frmAddIncidencias(this, usuario_b, e, servidor);
             incidencias.setVisible(true);
             this.setVisible(false);
         }
-
     }//GEN-LAST:event_btnAddIncidenciasActionPerformed
 
     private void btnGestionarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionarUsuariosActionPerformed
-        if (this.usuario == null) {
+        if (this.usuario_b == null) {
             frmUsuarios usuarios = new frmUsuarios(this, null, e, servidor);
             usuarios.setVisible(true);
             this.setVisible(false);
         } else {
-            frmUsuarios usuarios = new frmUsuarios(this, usuario, e, servidor);
+            frmUsuarios usuarios = new frmUsuarios(this, usuario_b, e, servidor);
             usuarios.setVisible(true);
             this.setVisible(false);
         }
@@ -193,12 +198,12 @@ public class frmPrincipal extends javax.swing.JFrame {
 
     private void btnGestionarRegionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionarRegionesActionPerformed
 
-        if (this.usuario == null) {
+        if (this.usuario_b == null) {
             frmRegiones regiones = new frmRegiones(this, null, e, servidor);
             regiones.setVisible(true);
             this.setVisible(false);
         } else {
-            frmRegiones regiones = new frmRegiones(this, usuario, e, servidor);
+            frmRegiones regiones = new frmRegiones(this, usuario_b, e, servidor);
             regiones.setVisible(true);
             this.setVisible(false);
         }
