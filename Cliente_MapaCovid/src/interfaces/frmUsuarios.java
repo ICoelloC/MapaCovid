@@ -204,7 +204,7 @@ public class frmUsuarios extends javax.swing.JFrame {
         try {
             DefaultTableModel tm = (DefaultTableModel) tblUsuarios.getModel();
             String activo = String.valueOf(tm.getValueAt(tblUsuarios.getSelectedRow(), 3));
-            String email = String.valueOf(tm.getValueAt(tblUsuarios.getSelectedRow(), 1));
+            String email = String.valueOf(tm.getValueAt(tblUsuarios.getSelectedRow(), 0));
             int accion;
             if (activo.equals("true")) {
                 accion = Constantes.DESACTIVAR_USUARIO;

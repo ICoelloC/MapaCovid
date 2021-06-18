@@ -33,11 +33,10 @@ import seguridad.Seguridad;
  */
 class HiloServidor extends Thread {
 
-    private Socket cliente;
-    private ConexionBBDD conexion;
-    private Escritor e;
-    private Claves claves;
-    //private Usuario conectado;
+    private final Socket cliente;
+    private final ConexionBBDD conexion;
+    private final Escritor e;
+    private final Claves claves;
     private Usuario_b conectado;
 
     public HiloServidor(Socket cliente) throws Exception {
@@ -77,15 +76,6 @@ class HiloServidor extends Thread {
                     case Constantes.GET_REGIONES:
                         getRegiones();
                         break;
-                    case Constantes.COMPROBAR_PRIMERA:
-                        comprobarPrimera();
-                        break;
-                    case Constantes.CAMBIAR_PASSWORD:
-                        cambiarPassword();
-                        break;
-                    case Constantes.MODIFICAR_USUARIO:
-                        modUsuario();
-                        break;
                     case Constantes.CARGAR_INCIDENCIAS:
                         cargarIncidencias();
                         break;
@@ -119,8 +109,7 @@ class HiloServidor extends Thread {
                         break;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
         }finally{
             try{
                 cliente.close();
@@ -128,14 +117,6 @@ class HiloServidor extends Thread {
                 Logger.getLogger(HiloServidor.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    private void registrar() throws Exception {
-        Usuario u = (Usuario) e.leer();
-        conexion.abrirConexion();
-        conexion.insertarUsuario(u.getEmail(), u.getNombre(), u.getRol(), u.getPassresumida(), u.getClavePrivadaUsuario(), u.getClavePublicaUsuario(), u.isActivo());
-        conexion.cerrarConexion();
-        e.escribir(true);
     }
     
     private void gestionClaves(Claves claves, Escritor e) throws NoSuchAlgorithmException, IOException, ClassNotFoundException {
@@ -154,36 +135,7 @@ class HiloServidor extends Thread {
     private String where(String campo, String comparador, String valor){
         return campo + " " + comparador + " '" + valor + "' ";
     }
-    private String whereBoolean(String campo, String comparador, boolean valor){
-        return campo + " " + comparador + " '" + valor + "' ";
-    }
     
-    private void loggear() throws Exception {
-        Usuario u = (Usuario) e.leer();
-        String email = u.getEmail();
-        String pass = Seguridad.desencriptarAsimetrico(u.getPassresumida(), u.getClavePrivadaUsuario());
-        conexion.abrirConexion();
-        String passEnBDD = conexion.obtenerValor(Constantes.TablaUsuarios, where(Constantes.usuariosEmail, "=", email), Constantes.usuariosPass);
-        if (passEnBDD != null) {
-            if (MessageDigest.isEqual(pass.getBytes(), passEnBDD.getBytes())) {
-                e.escribir(true);
-            } else {
-                e.escribir(false);
-            }
-        } else {
-            e.escribir(false);
-        }
-        conexion.cerrarConexion();
-    }
-
-    private void getUser() throws Exception {
-        String id = (String) e.leer();
-        conexion.abrirConexion();
-        Usuario u = conexion.getUsuario(where(Constantes.usuariosEmail, "=", id));
-        conexion.cerrarConexion();
-        //this.conectado = u;
-        e.escribir(u);
-    }
 
     private void saveRegion() throws Exception {
         Region r = (Region) e.leer();
@@ -205,18 +157,6 @@ class HiloServidor extends Thread {
         e.escribir(r);
     }
 
-    private void comprobarPrimera() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void cambiarPassword() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void modUsuario() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private void cargarIncidencias() throws SQLException, Exception {
         conexion.abrirConexion();
         ArrayList<Incidencia> incidencias = conexion.mostrarTodasLasIncidencias();
@@ -236,32 +176,11 @@ class HiloServidor extends Thread {
         e.escribir(true);
     }
 
-    private void cargarUsuarios() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     private void borrarUsuario() throws Exception {
         String email = (String) e.leer();
         conexion.abrirConexion();
         conexion.borrarDato(Constantes.TablaUsuariosB, where(Constantes.usuariosBEmail, "=", email));
         conexion.cerrarConexion();
-    }
-    
-    private void activarUsuario() throws Exception {
-        Usuario u = (Usuario) e.leer();
-        boolean activo = u.isActivo();
-        conexion.abrirConexion();
-        if (activo){
-            conexion.modificarDato(Constantes.TablaUsuarios, Constantes.usuariosActivo, whereBoolean(Constantes.usuariosActivo, "=", activo), "false");
-        }else{
-            conexion.modificarDato(Constantes.TablaUsuarios, Constantes.usuariosActivo, whereBoolean(Constantes.usuariosActivo, "=", activo), "true");
-        }
-        
-        conexion.cerrarConexion();
-    }
-
-    private void desactivarUsuario() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void cargarRegiones() throws Exception {
@@ -332,13 +251,13 @@ class HiloServidor extends Thread {
     private void activarDesactivar(boolean activar) throws Exception {
         conexion.abrirConexion();
         String email = (String) e.leer();
-        String activo = "";
+        boolean activo;
         if (activar){
-            activo = "true";
+            activo = true;
         }else{
-            activo = "false";
+            activo = false;
         }
-        conexion.modificarDato(Constantes.TablaUsuariosB, Constantes.usuariosBActivo, where(Constantes.usuariosBEmail, "=", email), activo);
+        conexion.activarDesactivarUser(email, activo);
         conexion.cerrarConexion();
     }
 

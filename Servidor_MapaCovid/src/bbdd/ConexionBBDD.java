@@ -271,6 +271,17 @@ public class ConexionBBDD {
         return ListaUsuario_b;
     }
 
+    public int activarDesactivarUser(String email, boolean activo) throws SQLException{
+        int cod = 0;
+        String s = "UPDATE "+Constantes.TablaUsuariosB+" SET "+Constantes.usuariosBActivo+" = "+activo+" WHERE "+Constantes.usuariosBEmail+" = '"+email+"'";
+        try{
+            Senntencia_SQL.executeUpdate(s);
+        }catch(SQLException e){
+            cod = e.getErrorCode();
+        }
+        return cod;
+    }
+    
     public int modificarDato(String tabla, String campo, String where, boolean activo) {
         int cod = 0;
         String Sentencia = "UPDATE " + tabla + " SET " + campo + " = '" + activo + "' WHERE " + where;
